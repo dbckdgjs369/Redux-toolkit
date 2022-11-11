@@ -23,10 +23,13 @@ const counterSlice = createSlice({
     }, //기존 redux에서는 기존상태를 변경하고 복사본을 만들지 않고, UI에서 변경 사항을 알지 못하기 때문에 굉장히 안 좋은 코드일 것이다.
     //Redux toolkit은 Immer라는 라이브러리를 사용해서 상태 업데이트를 래핑해서 추적한다.=> 복사, 확산, 매핑을 하는 것과 같은 역할을 해준다.
     //감소
+    amountAdded(state, action: PayloadAction<number>) {
+      state.value += action.payload;
+    },
     decremented(state) {},
     //리셋
   },
 });
 
-export const { incremented } = counterSlice.actions;
+export const { incremented, amountAdded } = counterSlice.actions;
 export default counterSlice.reducer;

@@ -1,9 +1,19 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { incremented, amountAdded } from "./features/counter/counter-slice";
+import reactLogo from "./assets/react.svg";
+import "./App.css";
+import { useFetchBreedsQuery } from "./features/dogs/dogs-api-slice";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [numDogs, setNumDogs] = useState(10);
+  const count = useAppSelector((state) => state.counter.value);
+  const dispatch = useAppDispatch();
+  const handleClick = () => {
+    // dispatch(incremented());
+    dispatch(amountAdded(10));
+  };
+  const { data = [], isFetching } = useFetchBreedsQuery(numDogs);
 
   return (
     <div className="App">
@@ -17,18 +27,44 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <button onClick={handleClick}>count is {count}</button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div>
+        <p>Dogs to fetch:</p>
+        <select
+          value={numDogs}
+          onChange={(e) => setNumDogs(Number(e.target.value))}
+        >
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+
+      <div>
+        <p>Number of dogs fetched: {data.length}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Picture</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((breed) => (
+              <tr key={breed.id}>
+                <td>{breed.name}</td>
+                <td>
+                  <img src={breed.image.url} alt={breed.name} height={250} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
